@@ -12,7 +12,68 @@ def conectar():
     Retorna:
         sqlite3.Connection: Objeto de conexión a la base de datos.
     """
-    return sqlite3.connect(DB_NAME)
+    conexion = sqlite3.connect(DB_NAME)
+    conexion.execute("PRAGMA foreign_keys = ON")
+    return conexion
+
+
+def crear_tablas():
+    """
+    Crea las tablas del sistema si todavía no existen.
+
+    Permite generar una base de datos nueva (por ejemplo, para pruebas)
+    con la misma estructura que la base del proyecto.
+    """
+    conexion = conectar()
+
+    try:
+        conexion.executescript("""
+            CREATE TABLE IF NOT EXISTS usuarios (
+                id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
+                nombre TEXT NOT NULL,
+                usuario TEXT NOT NULL UNIQUE,
+                contrasena TEXT NOT NULL,
+                rol TEXT NOT NULL,
+                estado TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS miembros (
+                id_miembro INTEGER PRIMARY KEY AUTOINCREMENT,
+                nombre TEXT NOT NULL,
+                apellido TEXT NOT NULL,
+                cedula TEXT NOT NULL UNIQUE,
+                telefono TEXT,
+                correo TEXT,
+                fecha_registro TEXT NOT NULL,
+                estado TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS pagos_cuotas (
+                id_pago INTEGER PRIMARY KEY AUTOINCREMENT,
+                id_miembro INTEGER NOT NULL,
+                monto INTEGER NOT NULL,
+                fecha_pago TEXT NOT NULL,
+                tipo_membresia TEXT NOT NULL,
+                fecha_inicio TEXT NOT NULL,
+                fecha_vencimiento TEXT NOT NULL,
+                estado_pago TEXT NOT NULL,
+                FOREIGN KEY (id_miembro) REFERENCES miembros(id_miembro)
+            );
+
+            CREATE TABLE IF NOT EXISTS asistencias (
+                id_asistencia INTEGER PRIMARY KEY AUTOINCREMENT,
+                id_miembro INTEGER NOT NULL,
+                fecha TEXT NOT NULL,
+                hora_entrada TEXT NOT NULL,
+                observacion TEXT,
+                FOREIGN KEY (id_miembro) REFERENCES miembros(id_miembro)
+            );
+        """)
+
+        conexion.commit()
+
+    finally:
+        conexion.close()
 
 
 def verificar_usuario(usuario, contrasena):

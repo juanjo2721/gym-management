@@ -23,22 +23,26 @@
 <td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
     
 <tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><dl><dt><a name="-conectar"><strong>conectar</strong></a>()</dt><dd><span class="code">Establece&nbsp;la&nbsp;conexion&nbsp;con&nbsp;la&nbsp;base&nbsp;de&nbsp;datos&nbsp;SQLite.<br>
+<td class="singlecolumn"><dl><dt><a name="-conectar"><strong>conectar</strong></a>()</dt><dd><span class="code">Establece&nbsp;la&nbsp;conexión&nbsp;con&nbsp;la&nbsp;base&nbsp;de&nbsp;datos&nbsp;SQLite.<br>
 &nbsp;<br>
 Retorna:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;sqlite3.Connection:&nbsp;Objeto&nbsp;de&nbsp;conexion&nbsp;a&nbsp;la&nbsp;base&nbsp;de&nbsp;datos.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;sqlite3.Connection:&nbsp;Objeto&nbsp;de&nbsp;conexión&nbsp;a&nbsp;la&nbsp;base&nbsp;de&nbsp;datos.</span></dd></dl>
+ <dl><dt><a name="-registrar_miembro"><strong>registrar_miembro</strong></a>(nombre, apellido, cedula, telefono, correo)</dt><dd><span class="code">Registra&nbsp;un&nbsp;nuevo&nbsp;miembro&nbsp;en&nbsp;la&nbsp;base&nbsp;de&nbsp;datos.<br>
+&nbsp;<br>
+Parámetros:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;nombre&nbsp;(str):&nbsp;Nombre&nbsp;del&nbsp;miembro.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;apellido&nbsp;(str):&nbsp;Apellido&nbsp;del&nbsp;miembro.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cedula&nbsp;(str):&nbsp;Número&nbsp;de&nbsp;cédula.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;telefono&nbsp;(str):&nbsp;Teléfono&nbsp;de&nbsp;contacto.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;correo&nbsp;(str):&nbsp;Correo&nbsp;electrónico.<br>
+&nbsp;<br>
+Retorna:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;True&nbsp;y&nbsp;mensaje&nbsp;si&nbsp;se&nbsp;registra&nbsp;correctamente.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;False&nbsp;y&nbsp;mensaje&nbsp;si&nbsp;ocurre&nbsp;un&nbsp;error.</span></dd></dl>
  <dl><dt><a name="-verificar_usuario"><strong>verificar_usuario</strong></a>(usuario, contrasena)</dt><dd><span class="code">Verifica&nbsp;las&nbsp;credenciales&nbsp;ingresadas&nbsp;por&nbsp;el&nbsp;usuario.<br>
 &nbsp;<br>
-Recibe&nbsp;un&nbsp;nombre&nbsp;de&nbsp;usuario&nbsp;y&nbsp;una&nbsp;contrasena.&nbsp;Luego&nbsp;consulta&nbsp;la&nbsp;tabla<br>
-usuarios&nbsp;para&nbsp;comprobar&nbsp;si&nbsp;existe&nbsp;un&nbsp;usuario&nbsp;activo&nbsp;con&nbsp;esas&nbsp;credenciales.<br>
-&nbsp;<br>
-Parametros:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;usuario&nbsp;(str):&nbsp;Nombre&nbsp;de&nbsp;usuario&nbsp;ingresado&nbsp;en&nbsp;el&nbsp;login.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;contrasena&nbsp;(str):&nbsp;Contrasena&nbsp;ingresada&nbsp;en&nbsp;el&nbsp;login.<br>
-&nbsp;<br>
 Retorna:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;tuple&nbsp;|&nbsp;None:&nbsp;Retorna&nbsp;los&nbsp;datos&nbsp;del&nbsp;usuario&nbsp;si&nbsp;las&nbsp;credenciales&nbsp;son<br>
-&nbsp;&nbsp;&nbsp;&nbsp;correctas.&nbsp;En&nbsp;caso&nbsp;contrario,&nbsp;retorna&nbsp;None.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;tuple&nbsp;|&nbsp;None:&nbsp;Datos&nbsp;del&nbsp;usuario&nbsp;si&nbsp;las&nbsp;credenciales&nbsp;son&nbsp;correctas.</span></dd></dl>
 </td></tr></table><p>
 <table class="section">
 <tr class="decor data-decor heading-text">

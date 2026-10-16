@@ -2,8 +2,6 @@ import tkinter as tk
 from tkinter import messagebox
 
 from estilos import (
-    COLOR_BOTON,
-    COLOR_BOTON_TEXTO,
     COLOR_FONDO,
     COLOR_PRINCIPAL,
     COLOR_SECUNDARIO,
@@ -50,6 +48,30 @@ def mostrar_pantalla_principal(ventana_principal, usuario, al_cerrar_sesion):
         height=90
     )
     encabezado.pack(fill="x")
+
+    def cerrar_sesion():
+        respuesta = messagebox.askyesno(
+            "Cerrar sesión",
+            "¿Desea cerrar la sesión actual?"
+        )
+
+        if respuesta:
+            al_cerrar_sesion()
+
+    # Se ubica en el encabezado para que siempre quede visible,
+    # sin depender del alto del contenido.
+    boton_cerrar = tk.Button(
+        encabezado,
+        text="Cerrar sesión",
+        font=("Arial", 10, "bold"),
+        bg=COLOR_SUBTITULO_ENCABEZADO,
+        fg=COLOR_PRINCIPAL,
+        width=14,
+        borderwidth=0,
+        cursor="hand2",
+        command=cerrar_sesion
+    )
+    boton_cerrar.place(relx=1, rely=0.5, x=-20, anchor="e")
 
     titulo = tk.Label(
         encabezado,
@@ -169,26 +191,3 @@ def mostrar_pantalla_principal(ventana_principal, usuario, al_cerrar_sesion):
         fg=COLOR_TEXTO_SUAVE
     )
     detalle.pack(anchor="w")
-
-    def cerrar_sesion():
-        respuesta = messagebox.askyesno(
-            "Cerrar sesión",
-            "¿Desea cerrar la sesión actual?"
-        )
-
-        if respuesta:
-            al_cerrar_sesion()
-
-    boton_cerrar = tk.Button(
-        contenido,
-        text="Cerrar sesión",
-        font=("Arial", 11, "bold"),
-        bg=COLOR_BOTON,
-        fg=COLOR_BOTON_TEXTO,
-        width=18,
-        height=2,
-        borderwidth=0,
-        cursor="hand2",
-        command=cerrar_sesion
-    )
-    boton_cerrar.pack(anchor="e", pady=(25, 0))

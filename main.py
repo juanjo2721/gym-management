@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from login import mostrar_login
+from app.vistas.login import mostrar_login
 
 
 def main():

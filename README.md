@@ -73,22 +73,31 @@ Los tipos de membresía se configuran en la tabla `tipos_membresia`:
 ```text
 gym-management/
 │
-├── main.py                 # Punto de entrada: crea la ventana y muestra el login
-├── login.py                # Pantalla de inicio de sesión
-├── pantalla_principal.py   # Panel principal con acceso a los módulos
-├── miembros.py             # Registro de miembros
-├── pagos.py                # Registro de pagos y cuotas
-├── database.py             # Conexión y consultas a SQLite
-├── estilos.py              # Colores y utilidades visuales compartidas
-├── generar_docs.py         # Genera la documentación HTML con pydoc
-├── test_login.py           # Pruebas de login y miembros
-├── test_pagos.py           # Pruebas de pagos
-├── requirements.txt        # Dependencias externas
-├── gym_management.db       # Base de datos SQLite
-├── database.html           # Documentación generada
-├── miembros.html           # Documentación generada
-├── pagos.html              # Documentación generada
-├── estilos.html            # Documentación generada
+├── main.py                       # Punto de entrada: crea la ventana y muestra el login
+│
+├── app/                          # Código de la aplicación
+│   ├── database.py               # Conexión y consultas a SQLite
+│   ├── estilos.py                # Colores y utilidades visuales compartidas
+│   └── vistas/                   # Pantallas de la interfaz (Tkinter)
+│       ├── login.py              # Pantalla de inicio de sesión
+│       ├── pantalla_principal.py # Panel principal con acceso a los módulos
+│       ├── miembros.py           # Registro de miembros
+│       └── pagos.py              # Registro de pagos y cuotas
+│
+├── tests/                        # Pruebas unitarias
+│   ├── test_login.py
+│   ├── test_miembros.py
+│   └── test_pagos.py
+│
+├── data/
+│   └── gym_management.db         # Base de datos SQLite
+│
+├── docs/                         # Documentación HTML generada con pydoc
+│
+├── scripts/
+│   └── generar_docs.py           # Genera la documentación en docs/
+│
+├── requirements.txt              # Dependencias externas
 ├── README.md
 └── .gitignore
 ```
@@ -108,12 +117,12 @@ Usuario de prueba: `admin` / `admin123`.
 python -m unittest -v
 ```
 
-Las pruebas crean una base de datos temporal en cada ejecución, por lo que no modifican `gym_management.db`.
+Las pruebas crean una base de datos temporal en cada ejecución, por lo que no modifican `data/gym_management.db`.
 
 ## Documentación
 
 ```bash
-python generar_docs.py
+python scripts/generar_docs.py
 ```
 
-Genera los archivos `.html` con pydoc usando rutas relativas.
+Genera los archivos `.html` en `docs/` con pydoc usando rutas relativas.

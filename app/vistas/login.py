@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
 
-from database import verificar_usuario
-from estilos import (
+from app.database import verificar_usuario
+from app.estilos import (
     COLOR_BOTON,
     COLOR_BOTON_TEXTO,
     COLOR_FONDO,
@@ -12,7 +12,7 @@ from estilos import (
     COLOR_TEXTO_SUAVE,
     limpiar_ventana,
 )
-from pantalla_principal import mostrar_pantalla_principal
+from app.vistas.pantalla_principal import mostrar_pantalla_principal
 
 
 def mostrar_login(ventana):

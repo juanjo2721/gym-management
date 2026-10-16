@@ -1,9 +1,12 @@
 import calendar
+import os
 import sqlite3
 from datetime import date, timedelta
 
 
-DB_NAME = "gym_management.db"
+RAIZ_PROYECTO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+DB_NAME = os.path.join(RAIZ_PROYECTO, "data", "gym_management.db")
 
 ESTADOS_PAGO = ("pagado", "pendiente", "vencido")
 

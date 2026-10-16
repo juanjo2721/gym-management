@@ -4,7 +4,7 @@ from tkinter import messagebox, ttk
 
 from tkcalendar import DateEntry
 
-from database import (
+from app.database import (
     actualizar_pagos_vencidos,
     buscar_miembro_por_cedula,
     calcular_fecha_vencimiento,
@@ -12,7 +12,7 @@ from database import (
     obtener_tipos_membresia,
     registrar_pago,
 )
-from estilos import (
+from app.estilos import (
     COLOR_BOTON,
     COLOR_BOTON_CERRAR,
     COLOR_BOTON_LIMPIAR,

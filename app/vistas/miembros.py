@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
 
-from database import registrar_miembro
-from estilos import (
+from app.database import registrar_miembro
+from app.estilos import (
     COLOR_BOTON,
     COLOR_BOTON_CERRAR,
     COLOR_BOTON_LIMPIAR,

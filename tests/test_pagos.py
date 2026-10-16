@@ -1,7 +1,7 @@
 import unittest
 from datetime import date, timedelta
 
-from database import (
+from app.database import (
     actualizar_pagos_vencidos,
     buscar_miembro_por_cedula,
     calcular_fecha_vencimiento,
@@ -10,7 +10,7 @@ from database import (
     registrar_miembro,
     registrar_pago,
 )
-from test_login import BaseDatosTemporal
+from tests.test_login import BaseDatosTemporal
 
 
 class TestCalculoVencimiento(unittest.TestCase):

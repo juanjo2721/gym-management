@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 
-from estilos import (
+from app.estilos import (
     COLOR_FONDO,
     COLOR_PRINCIPAL,
     COLOR_SECUNDARIO,
@@ -12,8 +12,8 @@ from estilos import (
     COLOR_TITULO_ENCABEZADO,
     limpiar_ventana,
 )
-from miembros import abrir_ventana_miembros
-from pagos import abrir_ventana_pagos
+from app.vistas.miembros import abrir_ventana_miembros
+from app.vistas.pagos import abrir_ventana_pagos
 
 
 def mostrar_modulo(nombre_modulo):

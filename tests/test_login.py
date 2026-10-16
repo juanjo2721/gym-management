@@ -3,8 +3,8 @@ import sqlite3
 import tempfile
 import unittest
 
-import database
-from database import registrar_miembro, verificar_usuario
+from app import database
+from app.database import verificar_usuario
 
 
 class BaseDatosTemporal(unittest.TestCase):
@@ -58,22 +58,6 @@ class TestLogin(BaseDatosTemporal):
     def test_login_usuario_inactivo(self):
         resultado = verificar_usuario("inactivo", "clave123")
         self.assertIsNone(resultado)
-
-
-class TestMiembros(BaseDatosTemporal):
-
-    def test_registrar_miembro_correcto(self):
-        registrado, _ = registrar_miembro(
-            "Ana", "Gomez", "1111111", "0981000000", "ana@email.com"
-        )
-        self.assertTrue(registrado)
-
-    def test_registrar_miembro_cedula_duplicada(self):
-        registrar_miembro("Ana", "Gomez", "1111111", "", "")
-        registrado, mensaje = registrar_miembro("Otra", "Persona", "1111111", "", "")
-
-        self.assertFalse(registrado)
-        self.assertIn("cédula", mensaje)
 
 
 if __name__ == "__main__":

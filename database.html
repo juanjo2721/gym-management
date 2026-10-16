@@ -1,33 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>Python: module database</title>
-</head><body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module database</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
 
-<table class="heading">
-<tr class="heading-text decor">
-<td class="title">&nbsp;<br><strong class="title">database</strong></td>
-<td class="extra"><a href=".">index</a><br><a href="file:c%3A%5Cusers%5Cjjacu%5Conedrive%5Cdocumentos%5Cgym-management%5Cdatabase.py">c:\users\jjacu\onedrive\documentos\gym-management\database.py</a></td></tr></table>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>database</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="database.py">database.py</a></font></td></tr></table>
     <p></p>
 <p>
-<table class="section">
-<tr class="decor pkg-content-decor heading-text">
-<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
     
-<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="sqlite3.html">sqlite3</a><br>
-</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
-<table class="section">
-<tr class="decor functions-decor heading-text">
-<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="sqlite3.html">sqlite3</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
-<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><dl><dt><a name="-conectar"><strong>conectar</strong></a>()</dt><dd><span class="code">Establece&nbsp;la&nbsp;conexión&nbsp;con&nbsp;la&nbsp;base&nbsp;de&nbsp;datos&nbsp;SQLite.<br>
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-conectar"><strong>conectar</strong></a>()</dt><dd><tt>Establece&nbsp;la&nbsp;conexión&nbsp;con&nbsp;la&nbsp;base&nbsp;de&nbsp;datos&nbsp;SQLite.<br>
 &nbsp;<br>
 Retorna:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;sqlite3.Connection:&nbsp;Objeto&nbsp;de&nbsp;conexión&nbsp;a&nbsp;la&nbsp;base&nbsp;de&nbsp;datos.</span></dd></dl>
- <dl><dt><a name="-registrar_miembro"><strong>registrar_miembro</strong></a>(nombre, apellido, cedula, telefono, correo)</dt><dd><span class="code">Registra&nbsp;un&nbsp;nuevo&nbsp;miembro&nbsp;en&nbsp;la&nbsp;base&nbsp;de&nbsp;datos.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sqlite3.Connection:&nbsp;Objeto&nbsp;de&nbsp;conexión&nbsp;a&nbsp;la&nbsp;base&nbsp;de&nbsp;datos.</tt></dd></dl>
+ <dl><dt><a name="-crear_tablas"><strong>crear_tablas</strong></a>()</dt><dd><tt>Crea&nbsp;las&nbsp;tablas&nbsp;del&nbsp;sistema&nbsp;si&nbsp;todavía&nbsp;no&nbsp;existen.<br>
+&nbsp;<br>
+Permite&nbsp;generar&nbsp;una&nbsp;base&nbsp;de&nbsp;datos&nbsp;nueva&nbsp;(por&nbsp;ejemplo,&nbsp;para&nbsp;pruebas)<br>
+con&nbsp;la&nbsp;misma&nbsp;estructura&nbsp;que&nbsp;la&nbsp;base&nbsp;del&nbsp;proyecto.</tt></dd></dl>
+ <dl><dt><a name="-registrar_miembro"><strong>registrar_miembro</strong></a>(nombre, apellido, cedula, telefono, correo)</dt><dd><tt>Registra&nbsp;un&nbsp;nuevo&nbsp;miembro&nbsp;en&nbsp;la&nbsp;base&nbsp;de&nbsp;datos.<br>
 &nbsp;<br>
 Parámetros:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;nombre&nbsp;(str):&nbsp;Nombre&nbsp;del&nbsp;miembro.<br>
@@ -38,16 +44,17 @@ Parámetros:<br>
 &nbsp;<br>
 Retorna:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;True&nbsp;y&nbsp;mensaje&nbsp;si&nbsp;se&nbsp;registra&nbsp;correctamente.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;False&nbsp;y&nbsp;mensaje&nbsp;si&nbsp;ocurre&nbsp;un&nbsp;error.</span></dd></dl>
- <dl><dt><a name="-verificar_usuario"><strong>verificar_usuario</strong></a>(usuario, contrasena)</dt><dd><span class="code">Verifica&nbsp;las&nbsp;credenciales&nbsp;ingresadas&nbsp;por&nbsp;el&nbsp;usuario.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;False&nbsp;y&nbsp;mensaje&nbsp;si&nbsp;ocurre&nbsp;un&nbsp;error.</tt></dd></dl>
+ <dl><dt><a name="-verificar_usuario"><strong>verificar_usuario</strong></a>(usuario, contrasena)</dt><dd><tt>Verifica&nbsp;las&nbsp;credenciales&nbsp;ingresadas&nbsp;por&nbsp;el&nbsp;usuario.<br>
 &nbsp;<br>
 Retorna:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;tuple&nbsp;|&nbsp;None:&nbsp;Datos&nbsp;del&nbsp;usuario&nbsp;si&nbsp;las&nbsp;credenciales&nbsp;son&nbsp;correctas.</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;tuple&nbsp;|&nbsp;None:&nbsp;Datos&nbsp;del&nbsp;usuario&nbsp;si&nbsp;las&nbsp;credenciales&nbsp;son&nbsp;correctas.</tt></dd></dl>
 </td></tr></table><p>
-<table class="section">
-<tr class="decor data-decor heading-text">
-<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
-<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
-<td class="singlecolumn"><strong>DB_NAME</strong> = 'gym_management.db'</td></tr></table>
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>DB_NAME</strong> = 'gym_management.db'</td></tr></table>
 </body></html>

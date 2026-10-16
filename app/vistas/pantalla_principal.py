@@ -13,6 +13,7 @@ from app.estilos import (
     COLOR_TITULO_ENCABEZADO,
     limpiar_ventana,
 )
+from app.vistas.configuracion import abrir_ventana_configuracion
 from app.vistas.miembros import abrir_ventana_miembros
 from app.vistas.pagos import abrir_ventana_pagos
 
@@ -34,7 +35,7 @@ def mostrar_pantalla_principal(ventana_principal, usuario, al_cerrar_sesion):
     limpiar_ventana(ventana_principal)
 
     ventana_principal.title("Sistema de Gestión para Gimnasio")
-    centrar_ventana(ventana_principal, 850, 520)
+    centrar_ventana(ventana_principal, 850, 640)
     ventana_principal.resizable(False, False)
     ventana_principal.configure(bg=COLOR_FONDO)
 
@@ -128,7 +129,7 @@ def mostrar_pantalla_principal(ventana_principal, usuario, al_cerrar_sesion):
     )
     panel_botones.pack(anchor="center")
 
-    def crear_boton_modulo(texto, fila, columna, comando=None):
+    def crear_boton_modulo(texto, fila, columna, comando=None, columnas=1):
         boton = tk.Button(
             panel_botones,
             text=texto,
@@ -147,6 +148,7 @@ def mostrar_pantalla_principal(ventana_principal, usuario, al_cerrar_sesion):
         boton.grid(
             row=fila,
             column=columna,
+            columnspan=columnas,
             padx=15,
             pady=15
         )
@@ -170,6 +172,14 @@ def mostrar_pantalla_principal(ventana_principal, usuario, al_cerrar_sesion):
     )
 
     crear_boton_modulo("Asistencia", 1, 1)
+
+    crear_boton_modulo(
+        "Configuración",
+        2,
+        0,
+        lambda: abrir_ventana_configuracion(ventana_principal),
+        columnas=2
+    )
 
     estado = tk.Label(
         contenido,

@@ -1,7 +1,8 @@
 import sqlite3
 import tkinter as tk
 import unittest
-from datetime import date
+from datetime import date, timedelta
+from tkinter import ttk
 from unittest import mock
 
 from app import database
@@ -133,6 +134,102 @@ class TestRegistrarMiembro(BaseDatosTemporal):
         self.assertIn("Error al registrar el miembro", mensaje)
 
 
+class TestCamposAdicionalesMiembro(BaseDatosTemporal):
+
+    def leer_campos_adicionales(self, cedula):
+        conexion = sqlite3.connect(database.DB_NAME)
+
+        try:
+            return conexion.execute("""
+                SELECT fecha_nacimiento, sexo, direccion, objetivo,
+                       contacto_emergencia, telefono_emergencia,
+                       observaciones_medicas
+                FROM miembros
+                WHERE cedula = ?
+            """, (cedula,)).fetchone()
+
+        finally:
+            conexion.close()
+
+    def test_guarda_campos_adicionales(self):
+        registrado, _ = registrar_miembro(
+            "Ana", "Gomez", "1111111", "", "",
+            fecha_nacimiento=date(1995, 4, 12),
+            sexo="Femenino",
+            direccion=" Av. España 123 ",
+            objetivo="Ganar masa muscular",
+            contacto_emergencia="Luis Gomez",
+            telefono_emergencia="0981111111",
+            observaciones_medicas="Lesión de rodilla"
+        )
+
+        self.assertTrue(registrado)
+        self.assertEqual(
+            self.leer_campos_adicionales("1111111"),
+            ("1995-04-12", "Femenino", "Av. España 123", "Ganar masa muscular",
+             "Luis Gomez", "0981111111", "Lesión de rodilla")
+        )
+
+    def test_campos_adicionales_opcionales(self):
+        registrar_miembro("Ana", "Gomez", "1111111", "", "")
+
+        campos = self.leer_campos_adicionales("1111111")
+
+        self.assertIsNone(campos[0])
+        self.assertEqual(campos[1:], ("", "", "", "", "", ""))
+
+    def test_fecha_nacimiento_futura(self):
+        registrado, _ = registrar_miembro(
+            "Ana", "Gomez", "1111111", "", "",
+            fecha_nacimiento=date.today() + timedelta(days=1)
+        )
+
+        self.assertFalse(registrado)
+        self.assertEqual(contar_miembros(), 0)
+
+    def test_sexo_invalido(self):
+        registrado, _ = registrar_miembro("Ana", "Gomez", "1111111", "", "", sexo="X")
+        self.assertFalse(registrado)
+
+    def test_objetivo_invalido(self):
+        registrado, _ = registrar_miembro(
+            "Ana", "Gomez", "1111111", "", "", objetivo="Otro más"
+        )
+        self.assertFalse(registrado)
+
+    def test_migra_base_existente_sin_perder_datos(self):
+        conexion = sqlite3.connect(database.DB_NAME)
+        conexion.executescript("""
+            DROP TABLE pagos_cuotas;
+            DROP TABLE asistencias;
+            DROP TABLE miembros;
+            CREATE TABLE miembros (
+                id_miembro INTEGER PRIMARY KEY AUTOINCREMENT,
+                nombre TEXT NOT NULL,
+                apellido TEXT NOT NULL,
+                cedula TEXT NOT NULL UNIQUE,
+                telefono TEXT,
+                correo TEXT,
+                fecha_registro TEXT NOT NULL,
+                estado TEXT NOT NULL
+            );
+            INSERT INTO miembros (
+                nombre, apellido, cedula, telefono, correo, fecha_registro, estado
+            )
+            VALUES ('Vieja', 'Base', '5555555', '', '', '2026-01-01', 'activo');
+        """)
+        conexion.close()
+
+        database.crear_tablas()
+
+        self.assertIsNotNone(buscar_miembro_por_cedula("5555555"))
+        registrado, _ = registrar_miembro(
+            "Ana", "Gomez", "1111111", "", "", objetivo="Bajar de peso"
+        )
+        self.assertTrue(registrado)
+        self.assertEqual(self.leer_campos_adicionales("1111111")[3], "Bajar de peso")
+
+
 class TestBuscarMiembroPorCedula(BaseDatosTemporal):
 
     def test_buscar_miembro_existente(self):
@@ -158,7 +255,19 @@ class TestFormularioMiembros(unittest.TestCase):
     se simulan los cuadros de mensaje y el registro en la base de datos.
     """
 
-    CAMPOS = ("nombre", "apellido", "cedula", "telefono", "correo")
+    CAMPOS = (
+        "nombre",
+        "apellido",
+        "cedula",
+        "fecha_nacimiento",
+        "telefono",
+        "correo",
+        "direccion",
+        "contacto_emergencia",
+        "telefono_emergencia",
+    )
+
+    COMBOS = ("sexo", "objetivo")
 
     @classmethod
     def setUpClass(cls):
@@ -190,8 +299,11 @@ class TestFormularioMiembros(unittest.TestCase):
         self.addCleanup(self.cerrar_ventana)
 
         widgets = self.listar_widgets(self.ventana)
-        entradas = [w for w in widgets if isinstance(w, tk.Entry)]
+        entradas = [w for w in widgets if type(w) is tk.Entry]
+        combos = [w for w in widgets if isinstance(w, ttk.Combobox)]
         self.entradas = dict(zip(self.CAMPOS, entradas))
+        self.combos = dict(zip(self.COMBOS, combos))
+        self.observaciones = next(w for w in widgets if isinstance(w, tk.Text))
         self.botones = {
             w.cget("text"): w for w in widgets if isinstance(w, tk.Button)
         }
@@ -216,8 +328,23 @@ class TestFormularioMiembros(unittest.TestCase):
     def guardar(self):
         self.botones["Guardar miembro"].invoke()
 
+    def llamada_esperada(self, nombre, apellido, cedula, telefono="", correo="", **adicionales):
+        datos = {
+            "fecha_nacimiento": None,
+            "sexo": "",
+            "direccion": "",
+            "objetivo": "",
+            "contacto_emergencia": "",
+            "telefono_emergencia": "",
+            "observaciones_medicas": "",
+        }
+        datos.update(adicionales)
+
+        return mock.call(nombre, apellido, cedula, telefono, correo, **datos)
+
     def test_formulario_tiene_todos_los_campos(self):
         self.assertEqual(len(self.entradas), len(self.CAMPOS))
+        self.assertEqual(len(self.combos), len(self.COMBOS))
         self.assertIn("Guardar miembro", self.botones)
         self.assertIn("Limpiar", self.botones)
         self.assertIn("Cerrar", self.botones)
@@ -233,17 +360,62 @@ class TestFormularioMiembros(unittest.TestCase):
 
         self.guardar()
 
-        self.registrar.assert_called_once_with(
-            "Ana", "Gomez", "1111111", "0981000000", "ana@email.com"
+        self.assertEqual(
+            self.registrar.call_args,
+            self.llamada_esperada("Ana", "Gomez", "1111111", "0981000000", "ana@email.com")
         )
         self.messagebox.showinfo.assert_called_once()
+
+    def test_guardar_campos_adicionales(self):
+        self.completar(
+            nombre="Ana",
+            apellido="Gomez",
+            cedula="1111111",
+            fecha_nacimiento="12/04/1995",
+            direccion="Av. España 123",
+            contacto_emergencia="Luis Gomez",
+            telefono_emergencia="0981111111"
+        )
+        self.combos["sexo"].set("Femenino")
+        self.combos["objetivo"].set("Bajar de peso")
+        self.observaciones.insert("1.0", "  Asma leve \n")
+
+        self.guardar()
+
+        self.assertEqual(
+            self.registrar.call_args,
+            self.llamada_esperada(
+                "Ana", "Gomez", "1111111",
+                fecha_nacimiento=date(1995, 4, 12),
+                sexo="Femenino",
+                direccion="Av. España 123",
+                objetivo="Bajar de peso",
+                contacto_emergencia="Luis Gomez",
+                telefono_emergencia="0981111111",
+                observaciones_medicas="Asma leve"
+            )
+        )
+
+    def test_fecha_nacimiento_invalida(self):
+        self.completar(
+            nombre="Ana", apellido="Gomez", cedula="1111111", fecha_nacimiento="1995-04-12"
+        )
+
+        self.guardar()
+
+        titulo = self.messagebox.showwarning.call_args[0][0]
+        self.assertEqual(titulo, "Fecha inválida")
+        self.registrar.assert_not_called()
 
     def test_guardar_elimina_espacios(self):
         self.completar(nombre="  Ana ", apellido=" Gomez ", cedula=" 1111111 ")
 
         self.guardar()
 
-        self.registrar.assert_called_once_with("Ana", "Gomez", "1111111", "", "")
+        self.assertEqual(
+            self.registrar.call_args,
+            self.llamada_esperada("Ana", "Gomez", "1111111")
+        )
 
     def test_registro_exitoso_limpia_formulario(self):
         self.completar(nombre="Ana", apellido="Gomez", cedula="1111111")
@@ -314,10 +486,16 @@ class TestFormularioMiembros(unittest.TestCase):
             correo="ana@email.com"
         )
 
+        self.combos["objetivo"].set("Bajar de peso")
+        self.observaciones.insert("1.0", "Asma leve")
+
         self.botones["Limpiar"].invoke()
 
         for entrada in self.entradas.values():
             self.assertEqual(entrada.get(), "")
+
+        self.assertEqual(self.combos["objetivo"].get(), "")
+        self.assertEqual(self.observaciones.get("1.0", tk.END).strip(), "")
 
     def test_boton_cerrar(self):
         self.botones["Cerrar"].invoke()

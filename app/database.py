@@ -12,6 +12,31 @@ ESTADOS_PAGO = ("pagado", "pendiente", "vencido")
 
 UNIDADES_DURACION = ("dias", "meses")
 
+ESTADOS_TIPO_MEMBRESIA = ("activo", "inactivo")
+
+SEXOS = ("Femenino", "Masculino", "Otro")
+
+OBJETIVOS_ENTRENAMIENTO = (
+    "Bajar de peso",
+    "Ganar masa muscular",
+    "Salud y mantenimiento",
+    "Rendimiento deportivo",
+    "Rehabilitación",
+    "Otro",
+)
+
+# Columnas agregadas a miembros después de la primera versión. Se crean
+# automáticamente en bases existentes al ejecutar crear_tablas().
+COLUMNAS_ADICIONALES_MIEMBROS = (
+    "fecha_nacimiento",
+    "sexo",
+    "direccion",
+    "objetivo",
+    "contacto_emergencia",
+    "telefono_emergencia",
+    "observaciones_medicas",
+)
+
 TIPOS_MEMBRESIA_INICIALES = [
     # (nombre, duracion_cantidad, duracion_unidad, precio)
     ("Diaria", 1, "dias", 20000),
@@ -62,7 +87,14 @@ def crear_tablas():
                 telefono TEXT,
                 correo TEXT,
                 fecha_registro TEXT NOT NULL,
-                estado TEXT NOT NULL
+                estado TEXT NOT NULL,
+                fecha_nacimiento TEXT,
+                sexo TEXT,
+                direccion TEXT,
+                objetivo TEXT,
+                contacto_emergencia TEXT,
+                telefono_emergencia TEXT,
+                observaciones_medicas TEXT
             );
 
             CREATE TABLE IF NOT EXISTS pagos_cuotas (
@@ -97,6 +129,14 @@ def crear_tablas():
         """)
 
         cursor = conexion.cursor()
+
+        cursor.execute("PRAGMA table_info(miembros)")
+        columnas_existentes = {fila[1] for fila in cursor.fetchall()}
+
+        for columna in COLUMNAS_ADICIONALES_MIEMBROS:
+            if columna not in columnas_existentes:
+                cursor.execute(f"ALTER TABLE miembros ADD COLUMN {columna} TEXT")
+
         cursor.execute("SELECT COUNT(*) FROM tipos_membresia")
 
         if cursor.fetchone()[0] == 0:
@@ -143,7 +183,20 @@ def verificar_usuario(usuario, contrasena):
         conexion.close()
 
 
-def registrar_miembro(nombre, apellido, cedula, telefono, correo):
+def registrar_miembro(
+    nombre,
+    apellido,
+    cedula,
+    telefono,
+    correo,
+    fecha_nacimiento=None,
+    sexo="",
+    direccion="",
+    objetivo="",
+    contacto_emergencia="",
+    telefono_emergencia="",
+    observaciones_medicas=""
+):
     """
     Registra un nuevo miembro en la base de datos.
 
@@ -153,11 +206,27 @@ def registrar_miembro(nombre, apellido, cedula, telefono, correo):
         cedula (str): Número de cédula.
         telefono (str): Teléfono de contacto.
         correo (str): Correo electrónico.
+        fecha_nacimiento (date | None): Fecha de nacimiento (opcional).
+        sexo (str): Uno de SEXOS, o vacío.
+        direccion (str): Dirección del miembro.
+        objetivo (str): Uno de OBJETIVOS_ENTRENAMIENTO, o vacío.
+        contacto_emergencia (str): Nombre de la persona a avisar.
+        telefono_emergencia (str): Teléfono de esa persona.
+        observaciones_medicas (str): Lesiones, alergias o condiciones.
 
     Retorna:
         tuple: True y mensaje si se registra correctamente.
                False y mensaje si ocurre un error.
     """
+    if sexo and sexo not in SEXOS:
+        return False, "El sexo seleccionado no es válido."
+
+    if objetivo and objetivo not in OBJETIVOS_ENTRENAMIENTO:
+        return False, "El objetivo seleccionado no es válido."
+
+    if fecha_nacimiento is not None and fecha_nacimiento > date.today():
+        return False, "La fecha de nacimiento no puede ser futura."
+
     conexion = conectar()
 
     try:
@@ -172,9 +241,16 @@ def registrar_miembro(nombre, apellido, cedula, telefono, correo):
                 telefono,
                 correo,
                 fecha_registro,
-                estado
+                estado,
+                fecha_nacimiento,
+                sexo,
+                direccion,
+                objetivo,
+                contacto_emergencia,
+                telefono_emergencia,
+                observaciones_medicas
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             nombre.strip(),
             apellido.strip(),
@@ -182,7 +258,14 @@ def registrar_miembro(nombre, apellido, cedula, telefono, correo):
             telefono.strip(),
             correo.strip(),
             fecha_registro,
-            "activo"
+            "activo",
+            fecha_nacimiento.isoformat() if fecha_nacimiento else None,
+            sexo,
+            direccion.strip(),
+            objetivo,
+            contacto_emergencia.strip(),
+            telefono_emergencia.strip(),
+            observaciones_medicas.strip()
         ))
 
         conexion.commit()
@@ -422,6 +505,182 @@ def listar_pagos(id_miembro=None, limite=100):
         cursor.execute(consulta, parametros)
 
         return cursor.fetchall()
+
+    finally:
+        conexion.close()
+
+
+def listar_tipos_membresia():
+    """
+    Lista todos los tipos de membresía, activos e inactivos, para la
+    pantalla de configuración.
+
+    Retorna:
+        list[tuple]: (id_tipo, nombre, duracion_cantidad, duracion_unidad,
+                      precio, estado)
+    """
+    conexion = conectar()
+
+    try:
+        cursor = conexion.cursor()
+
+        cursor.execute("""
+            SELECT id_tipo, nombre, duracion_cantidad, duracion_unidad, precio, estado
+            FROM tipos_membresia
+            ORDER BY id_tipo
+        """)
+
+        return cursor.fetchall()
+
+    finally:
+        conexion.close()
+
+
+def validar_tipo_membresia(nombre, duracion_cantidad, duracion_unidad, precio):
+    """
+    Valida los datos de un tipo de membresía.
+
+    Retorna:
+        str | None: Mensaje de error, o None si los datos son válidos.
+    """
+    if not nombre.strip():
+        return "El nombre del tipo de membresía es obligatorio."
+
+    if duracion_unidad not in UNIDADES_DURACION:
+        return "La unidad de duración no es válida."
+
+    if duracion_cantidad <= 0:
+        return "La duración debe ser mayor a cero."
+
+    if precio <= 0:
+        return "El precio debe ser mayor a cero."
+
+    return None
+
+
+def crear_tipo_membresia(nombre, duracion_cantidad, duracion_unidad, precio):
+    """
+    Crea un nuevo tipo de membresía en estado activo.
+
+    Parámetros:
+        nombre (str): Nombre del tipo (Semanal, Mensual, etc.).
+        duracion_cantidad (int): Cantidad de días o meses que dura.
+        duracion_unidad (str): 'dias' o 'meses'.
+        precio (int): Precio sugerido en guaraníes.
+
+    Retorna:
+        tuple: True y mensaje si se crea correctamente.
+               False y mensaje si ocurre un error.
+    """
+    error = validar_tipo_membresia(nombre, duracion_cantidad, duracion_unidad, precio)
+
+    if error:
+        return False, error
+
+    conexion = conectar()
+
+    try:
+        conexion.execute("""
+            INSERT INTO tipos_membresia (
+                nombre,
+                duracion_cantidad,
+                duracion_unidad,
+                precio,
+                estado
+            )
+            VALUES (?, ?, ?, ?, 'activo')
+        """, (nombre.strip(), duracion_cantidad, duracion_unidad, precio))
+
+        conexion.commit()
+
+        return True, "Tipo de membresía creado correctamente."
+
+    except sqlite3.IntegrityError:
+        return False, "Ya existe un tipo de membresía con ese nombre."
+
+    except sqlite3.Error as error:
+        return False, f"Error al crear el tipo de membresía: {error}"
+
+    finally:
+        conexion.close()
+
+
+def actualizar_tipo_membresia(id_tipo, nombre, duracion_cantidad, duracion_unidad, precio):
+    """
+    Modifica los datos de un tipo de membresía existente.
+
+    Los pagos ya registrados no cambian, porque guardan el nombre, el monto
+    y las fechas al momento del registro.
+
+    Retorna:
+        tuple: True y mensaje si se actualiza correctamente.
+               False y mensaje si ocurre un error.
+    """
+    error = validar_tipo_membresia(nombre, duracion_cantidad, duracion_unidad, precio)
+
+    if error:
+        return False, error
+
+    conexion = conectar()
+
+    try:
+        cursor = conexion.cursor()
+
+        cursor.execute("""
+            UPDATE tipos_membresia
+            SET nombre = ?,
+                duracion_cantidad = ?,
+                duracion_unidad = ?,
+                precio = ?
+            WHERE id_tipo = ?
+        """, (nombre.strip(), duracion_cantidad, duracion_unidad, precio, id_tipo))
+
+        if cursor.rowcount == 0:
+            return False, "El tipo de membresía no existe."
+
+        conexion.commit()
+
+        return True, "Tipo de membresía actualizado correctamente."
+
+    except sqlite3.IntegrityError:
+        return False, "Ya existe un tipo de membresía con ese nombre."
+
+    except sqlite3.Error as error:
+        return False, f"Error al actualizar el tipo de membresía: {error}"
+
+    finally:
+        conexion.close()
+
+
+def cambiar_estado_tipo_membresia(id_tipo, estado):
+    """
+    Activa o desactiva un tipo de membresía. Los inactivos no se ofrecen
+    al registrar pagos, pero se conservan para el historial.
+
+    Retorna:
+        tuple: True y mensaje si se actualiza correctamente.
+               False y mensaje si ocurre un error.
+    """
+    if estado not in ESTADOS_TIPO_MEMBRESIA:
+        return False, "El estado no es válido."
+
+    conexion = conectar()
+
+    try:
+        cursor = conexion.cursor()
+
+        cursor.execute("""
+            UPDATE tipos_membresia
+            SET estado = ?
+            WHERE id_tipo = ?
+        """, (estado, id_tipo))
+
+        if cursor.rowcount == 0:
+            return False, "El tipo de membresía no existe."
+
+        conexion.commit()
+
+        return True, f"Tipo de membresía marcado como {estado}."
 
     finally:
         conexion.close()

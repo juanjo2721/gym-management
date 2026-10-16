@@ -33,8 +33,10 @@ Permite:
 Permite:
 
 - Registrar un nuevo miembro.
-- Cargar datos personales.
+- Cargar datos personales (nombre, apellido, cédula, fecha de nacimiento, sexo, dirección).
 - Registrar datos de contacto.
+- Registrar el objetivo de entrenamiento (bajar de peso, ganar masa muscular, etc.).
+- Registrar un contacto de emergencia y observaciones médicas (lesiones, alergias, medicación).
 - Guardar la información en la tabla `miembros`.
 - Validar que la cédula no esté duplicada.
 - Establecer automáticamente la fecha de registro.
@@ -62,6 +64,15 @@ Los tipos de membresía se configuran en la tabla `tipos_membresia`:
 | `precio` | Precio sugerido en guaraníes |
 | `estado` | `activo` o `inactivo` (los inactivos no se muestran) |
 
+### Módulo de Configuración
+
+Permite administrar los tipos de membresía sin tocar la base de datos:
+
+- Crear nuevos tipos (por ejemplo, Semanal = 7 días).
+- Modificar nombre, duración y precio de un tipo existente.
+- Activar o desactivar tipos; los inactivos no se ofrecen al registrar pagos.
+- Los pagos ya registrados no cambian al modificar un tipo.
+
 ## Próximos módulos
 
 - Usuarios
@@ -82,11 +93,13 @@ gym-management/
 │       ├── login.py              # Pantalla de inicio de sesión
 │       ├── pantalla_principal.py # Panel principal con acceso a los módulos
 │       ├── miembros.py           # Registro de miembros
-│       └── pagos.py              # Registro de pagos y cuotas
+│       ├── pagos.py              # Registro de pagos y cuotas
+│       └── configuracion.py      # Tipos de membresía y precios
 │
 ├── tests/                        # Pruebas unitarias
 │   ├── test_login.py
 │   ├── test_miembros.py
+│   ├── test_configuracion.py
 │   └── test_pagos.py
 │
 ├── data/

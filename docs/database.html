@@ -32,6 +32,14 @@ ya&nbsp;pasó.<br>
 &nbsp;<br>
 Retorna:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;int:&nbsp;Cantidad&nbsp;de&nbsp;pagos&nbsp;actualizados.</tt></dd></dl>
+ <dl><dt><a name="-actualizar_tipo_membresia"><strong>actualizar_tipo_membresia</strong></a>(id_tipo, nombre, duracion_cantidad, duracion_unidad, precio)</dt><dd><tt>Modifica&nbsp;los&nbsp;datos&nbsp;de&nbsp;un&nbsp;tipo&nbsp;de&nbsp;membresía&nbsp;existente.<br>
+&nbsp;<br>
+Los&nbsp;pagos&nbsp;ya&nbsp;registrados&nbsp;no&nbsp;cambian,&nbsp;porque&nbsp;guardan&nbsp;el&nbsp;nombre,&nbsp;el&nbsp;monto<br>
+y&nbsp;las&nbsp;fechas&nbsp;al&nbsp;momento&nbsp;del&nbsp;registro.<br>
+&nbsp;<br>
+Retorna:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;True&nbsp;y&nbsp;mensaje&nbsp;si&nbsp;se&nbsp;actualiza&nbsp;correctamente.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;False&nbsp;y&nbsp;mensaje&nbsp;si&nbsp;ocurre&nbsp;un&nbsp;error.</tt></dd></dl>
  <dl><dt><a name="-buscar_miembro_por_cedula"><strong>buscar_miembro_por_cedula</strong></a>(cedula)</dt><dd><tt>Busca&nbsp;un&nbsp;miembro&nbsp;por&nbsp;su&nbsp;número&nbsp;de&nbsp;cédula.<br>
 &nbsp;<br>
 Retorna:<br>
@@ -49,6 +57,12 @@ Parámetros:<br>
 &nbsp;<br>
 Retorna:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;date:&nbsp;Fecha&nbsp;de&nbsp;vencimiento.</tt></dd></dl>
+ <dl><dt><a name="-cambiar_estado_tipo_membresia"><strong>cambiar_estado_tipo_membresia</strong></a>(id_tipo, estado)</dt><dd><tt>Activa&nbsp;o&nbsp;desactiva&nbsp;un&nbsp;tipo&nbsp;de&nbsp;membresía.&nbsp;Los&nbsp;inactivos&nbsp;no&nbsp;se&nbsp;ofrecen<br>
+al&nbsp;registrar&nbsp;pagos,&nbsp;pero&nbsp;se&nbsp;conservan&nbsp;para&nbsp;el&nbsp;historial.<br>
+&nbsp;<br>
+Retorna:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;True&nbsp;y&nbsp;mensaje&nbsp;si&nbsp;se&nbsp;actualiza&nbsp;correctamente.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;False&nbsp;y&nbsp;mensaje&nbsp;si&nbsp;ocurre&nbsp;un&nbsp;error.</tt></dd></dl>
  <dl><dt><a name="-conectar"><strong>conectar</strong></a>()</dt><dd><tt>Establece&nbsp;la&nbsp;conexión&nbsp;con&nbsp;la&nbsp;base&nbsp;de&nbsp;datos&nbsp;SQLite.<br>
 &nbsp;<br>
 Retorna:<br>
@@ -57,6 +71,17 @@ Retorna:<br>
 &nbsp;<br>
 Permite&nbsp;generar&nbsp;una&nbsp;base&nbsp;de&nbsp;datos&nbsp;nueva&nbsp;(por&nbsp;ejemplo,&nbsp;para&nbsp;pruebas)<br>
 con&nbsp;la&nbsp;misma&nbsp;estructura&nbsp;que&nbsp;la&nbsp;base&nbsp;del&nbsp;proyecto.</tt></dd></dl>
+ <dl><dt><a name="-crear_tipo_membresia"><strong>crear_tipo_membresia</strong></a>(nombre, duracion_cantidad, duracion_unidad, precio)</dt><dd><tt>Crea&nbsp;un&nbsp;nuevo&nbsp;tipo&nbsp;de&nbsp;membresía&nbsp;en&nbsp;estado&nbsp;activo.<br>
+&nbsp;<br>
+Parámetros:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;nombre&nbsp;(str):&nbsp;Nombre&nbsp;del&nbsp;tipo&nbsp;(Semanal,&nbsp;Mensual,&nbsp;etc.).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;duracion_cantidad&nbsp;(int):&nbsp;Cantidad&nbsp;de&nbsp;días&nbsp;o&nbsp;meses&nbsp;que&nbsp;dura.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;duracion_unidad&nbsp;(str):&nbsp;'dias'&nbsp;o&nbsp;'meses'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;precio&nbsp;(int):&nbsp;Precio&nbsp;sugerido&nbsp;en&nbsp;guaraníes.<br>
+&nbsp;<br>
+Retorna:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;True&nbsp;y&nbsp;mensaje&nbsp;si&nbsp;se&nbsp;crea&nbsp;correctamente.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;False&nbsp;y&nbsp;mensaje&nbsp;si&nbsp;ocurre&nbsp;un&nbsp;error.</tt></dd></dl>
  <dl><dt><a name="-listar_pagos"><strong>listar_pagos</strong></a>(id_miembro=None, limite=100)</dt><dd><tt>Lista&nbsp;los&nbsp;pagos&nbsp;registrados,&nbsp;del&nbsp;más&nbsp;reciente&nbsp;al&nbsp;más&nbsp;antiguo.<br>
 &nbsp;<br>
 Parámetros:<br>
@@ -66,11 +91,17 @@ Parámetros:<br>
 Retorna:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;list[tuple]:&nbsp;(id_pago,&nbsp;miembro,&nbsp;cedula,&nbsp;tipo_membresia,&nbsp;monto,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fecha_pago,&nbsp;fecha_inicio,&nbsp;fecha_vencimiento,&nbsp;estado_pago)</tt></dd></dl>
+ <dl><dt><a name="-listar_tipos_membresia"><strong>listar_tipos_membresia</strong></a>()</dt><dd><tt>Lista&nbsp;todos&nbsp;los&nbsp;tipos&nbsp;de&nbsp;membresía,&nbsp;activos&nbsp;e&nbsp;inactivos,&nbsp;para&nbsp;la<br>
+pantalla&nbsp;de&nbsp;configuración.<br>
+&nbsp;<br>
+Retorna:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;list[tuple]:&nbsp;(id_tipo,&nbsp;nombre,&nbsp;duracion_cantidad,&nbsp;duracion_unidad,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;precio,&nbsp;estado)</tt></dd></dl>
  <dl><dt><a name="-obtener_tipos_membresia"><strong>obtener_tipos_membresia</strong></a>()</dt><dd><tt>Obtiene&nbsp;los&nbsp;tipos&nbsp;de&nbsp;membresía&nbsp;activos.<br>
 &nbsp;<br>
 Retorna:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;list[tuple]:&nbsp;(id_tipo,&nbsp;nombre,&nbsp;duracion_cantidad,&nbsp;duracion_unidad,&nbsp;precio)</tt></dd></dl>
- <dl><dt><a name="-registrar_miembro"><strong>registrar_miembro</strong></a>(nombre, apellido, cedula, telefono, correo)</dt><dd><tt>Registra&nbsp;un&nbsp;nuevo&nbsp;miembro&nbsp;en&nbsp;la&nbsp;base&nbsp;de&nbsp;datos.<br>
+ <dl><dt><a name="-registrar_miembro"><strong>registrar_miembro</strong></a>(nombre, apellido, cedula, telefono, correo, fecha_nacimiento=None, sexo='', direccion='', objetivo='', contacto_emergencia='', telefono_emergencia='', observaciones_medicas='')</dt><dd><tt>Registra&nbsp;un&nbsp;nuevo&nbsp;miembro&nbsp;en&nbsp;la&nbsp;base&nbsp;de&nbsp;datos.<br>
 &nbsp;<br>
 Parámetros:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;nombre&nbsp;(str):&nbsp;Nombre&nbsp;del&nbsp;miembro.<br>
@@ -78,6 +109,13 @@ Parámetros:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;cedula&nbsp;(str):&nbsp;Número&nbsp;de&nbsp;cédula.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;telefono&nbsp;(str):&nbsp;Teléfono&nbsp;de&nbsp;contacto.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;correo&nbsp;(str):&nbsp;Correo&nbsp;electrónico.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fecha_nacimiento&nbsp;(date&nbsp;|&nbsp;None):&nbsp;Fecha&nbsp;de&nbsp;nacimiento&nbsp;(opcional).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sexo&nbsp;(str):&nbsp;Uno&nbsp;de&nbsp;SEXOS,&nbsp;o&nbsp;vacío.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;direccion&nbsp;(str):&nbsp;Dirección&nbsp;del&nbsp;miembro.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;objetivo&nbsp;(str):&nbsp;Uno&nbsp;de&nbsp;OBJETIVOS_ENTRENAMIENTO,&nbsp;o&nbsp;vacío.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;contacto_emergencia&nbsp;(str):&nbsp;Nombre&nbsp;de&nbsp;la&nbsp;persona&nbsp;a&nbsp;avisar.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;telefono_emergencia&nbsp;(str):&nbsp;Teléfono&nbsp;de&nbsp;esa&nbsp;persona.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;observaciones_medicas&nbsp;(str):&nbsp;Lesiones,&nbsp;alergias&nbsp;o&nbsp;condiciones.<br>
 &nbsp;<br>
 Retorna:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;True&nbsp;y&nbsp;mensaje&nbsp;si&nbsp;se&nbsp;registra&nbsp;correctamente.<br>
@@ -95,6 +133,10 @@ Parámetros:<br>
 Retorna:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;True&nbsp;y&nbsp;mensaje&nbsp;si&nbsp;se&nbsp;registra&nbsp;correctamente.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;False&nbsp;y&nbsp;mensaje&nbsp;si&nbsp;ocurre&nbsp;un&nbsp;error.</tt></dd></dl>
+ <dl><dt><a name="-validar_tipo_membresia"><strong>validar_tipo_membresia</strong></a>(nombre, duracion_cantidad, duracion_unidad, precio)</dt><dd><tt>Valida&nbsp;los&nbsp;datos&nbsp;de&nbsp;un&nbsp;tipo&nbsp;de&nbsp;membresía.<br>
+&nbsp;<br>
+Retorna:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str&nbsp;|&nbsp;None:&nbsp;Mensaje&nbsp;de&nbsp;error,&nbsp;o&nbsp;None&nbsp;si&nbsp;los&nbsp;datos&nbsp;son&nbsp;válidos.</tt></dd></dl>
  <dl><dt><a name="-verificar_usuario"><strong>verificar_usuario</strong></a>(usuario, contrasena)</dt><dd><tt>Verifica&nbsp;las&nbsp;credenciales&nbsp;ingresadas&nbsp;por&nbsp;el&nbsp;usuario.<br>
 &nbsp;<br>
 Retorna:<br>
@@ -106,9 +148,13 @@ Retorna:<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>DB_NAME</strong> = r'C:\Users\candi\Documents\desarrollos\gymmanagement\gym-management\data\gym_management.db'<br>
+<td width="100%"><strong>COLUMNAS_ADICIONALES_MIEMBROS</strong> = ('fecha_nacimiento', 'sexo', 'direccion', 'objetivo', 'contacto_emergencia', 'telefono_emergencia', 'observaciones_medicas')<br>
+<strong>DB_NAME</strong> = r'C:\Users\candi\Documents\desarrollos\gymmanagement\gym-management\data\gym_management.db'<br>
 <strong>ESTADOS_PAGO</strong> = ('pagado', 'pendiente', 'vencido')<br>
+<strong>ESTADOS_TIPO_MEMBRESIA</strong> = ('activo', 'inactivo')<br>
+<strong>OBJETIVOS_ENTRENAMIENTO</strong> = ('Bajar de peso', 'Ganar masa muscular', 'Salud y mantenimiento', 'Rendimiento deportivo', 'Rehabilitación', 'Otro')<br>
 <strong>RAIZ_PROYECTO</strong> = r'C:\Users\candi\Documents\desarrollos\gymmanagement\gym-management'<br>
+<strong>SEXOS</strong> = ('Femenino', 'Masculino', 'Otro')<br>
 <strong>TIPOS_MEMBRESIA_INICIALES</strong> = [('Diaria', 1, 'dias', 20000), ('Quincenal', 15, 'dias', 80000), ('Mensual', 1, 'meses', 150000), ('Trimestral', 3, 'meses', 400000), ('Anual', 12, 'meses', 1400000)]<br>
 <strong>UNIDADES_DURACION</strong> = ('dias', 'meses')</td></tr></table>
 </body></html>

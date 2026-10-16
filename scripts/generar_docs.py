@@ -24,6 +24,7 @@ MODULOS = [
     "app.estilos",
     "app.vistas.miembros",
     "app.vistas.pagos",
+    "app.vistas.configuracion",
 ]
 
 

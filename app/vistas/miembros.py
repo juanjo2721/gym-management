@@ -3,6 +3,7 @@ from tkinter import messagebox
 
 from app.database import registrar_miembro
 from app.estilos import (
+    centrar_ventana,
     COLOR_BOTON,
     COLOR_BOTON_CERRAR,
     COLOR_BOTON_LIMPIAR,
@@ -20,7 +21,7 @@ from app.estilos import (
 def abrir_ventana_miembros(ventana_principal):
     ventana = tk.Toplevel(ventana_principal)
     ventana.title("Agregar miembro")
-    ventana.geometry("600x560")
+    centrar_ventana(ventana, 600, 560)
     ventana.resizable(False, False)
     ventana.configure(bg=COLOR_FONDO)
 

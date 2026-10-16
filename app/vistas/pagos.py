@@ -13,6 +13,7 @@ from app.database import (
     registrar_pago,
 )
 from app.estilos import (
+    centrar_ventana,
     COLOR_BOTON,
     COLOR_BOTON_CERRAR,
     COLOR_BOTON_LIMPIAR,
@@ -55,7 +56,7 @@ def abrir_ventana_pagos(ventana_principal):
 
     ventana = tk.Toplevel(ventana_principal)
     ventana.title("Pagos y cuotas")
-    ventana.geometry("860x760")
+    centrar_ventana(ventana, 860, 760)
     ventana.resizable(False, False)
     ventana.configure(bg=COLOR_FONDO)
 

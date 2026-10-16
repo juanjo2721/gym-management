@@ -3,6 +3,7 @@ from tkinter import messagebox
 
 from app.database import verificar_usuario
 from app.estilos import (
+    centrar_ventana,
     COLOR_BOTON,
     COLOR_BOTON_TEXTO,
     COLOR_FONDO,
@@ -22,7 +23,7 @@ def mostrar_login(ventana):
     limpiar_ventana(ventana)
 
     ventana.title("Sistema de Gestion para Gimnasio")
-    ventana.geometry("500x420")
+    centrar_ventana(ventana, 500, 420)
     ventana.resizable(False, False)
     ventana.configure(bg=COLOR_FONDO)
 

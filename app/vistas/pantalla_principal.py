@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 from app.estilos import (
+    centrar_ventana,
     COLOR_FONDO,
     COLOR_PRINCIPAL,
     COLOR_SECUNDARIO,
@@ -33,7 +34,7 @@ def mostrar_pantalla_principal(ventana_principal, usuario, al_cerrar_sesion):
     limpiar_ventana(ventana_principal)
 
     ventana_principal.title("Sistema de Gestión para Gimnasio")
-    ventana_principal.geometry("850x520")
+    centrar_ventana(ventana_principal, 850, 520)
     ventana_principal.resizable(False, False)
     ventana_principal.configure(bg=COLOR_FONDO)
 

@@ -24,3 +24,12 @@ def limpiar_ventana(ventana):
     """
     for widget in ventana.winfo_children():
         widget.destroy()
+
+
+def centrar_ventana(ventana, ancho, alto):
+    """
+    Establece el tamaño de la ventana y la ubica en el centro de la pantalla.
+    """
+    x = (ventana.winfo_screenwidth() - ancho) // 2
+    y = (ventana.winfo_screenheight() - alto) // 2
+    ventana.geometry(f"{ancho}x{alto}+{x}+{y}")

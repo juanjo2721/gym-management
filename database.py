@@ -1,8 +1,22 @@
+import calendar
 import sqlite3
-from datetime import date
+from datetime import date, timedelta
 
 
 DB_NAME = "gym_management.db"
+
+ESTADOS_PAGO = ("pagado", "pendiente", "vencido")
+
+UNIDADES_DURACION = ("dias", "meses")
+
+TIPOS_MEMBRESIA_INICIALES = [
+    # (nombre, duracion_cantidad, duracion_unidad, precio)
+    ("Diaria", 1, "dias", 20000),
+    ("Quincenal", 15, "dias", 80000),
+    ("Mensual", 1, "meses", 150000),
+    ("Trimestral", 3, "meses", 400000),
+    ("Anual", 12, "meses", 1400000),
+]
 
 
 def conectar():
@@ -68,7 +82,31 @@ def crear_tablas():
                 observacion TEXT,
                 FOREIGN KEY (id_miembro) REFERENCES miembros(id_miembro)
             );
+
+            CREATE TABLE IF NOT EXISTS tipos_membresia (
+                id_tipo INTEGER PRIMARY KEY AUTOINCREMENT,
+                nombre TEXT NOT NULL UNIQUE,
+                duracion_cantidad INTEGER NOT NULL,
+                duracion_unidad TEXT NOT NULL,
+                precio INTEGER NOT NULL,
+                estado TEXT NOT NULL
+            );
         """)
+
+        cursor = conexion.cursor()
+        cursor.execute("SELECT COUNT(*) FROM tipos_membresia")
+
+        if cursor.fetchone()[0] == 0:
+            cursor.executemany("""
+                INSERT INTO tipos_membresia (
+                    nombre,
+                    duracion_cantidad,
+                    duracion_unidad,
+                    precio,
+                    estado
+                )
+                VALUES (?, ?, ?, ?, 'activo')
+            """, TIPOS_MEMBRESIA_INICIALES)
 
         conexion.commit()
 
@@ -153,6 +191,234 @@ def registrar_miembro(nombre, apellido, cedula, telefono, correo):
 
     except sqlite3.Error as error:
         return False, f"Error al registrar el miembro: {error}"
+
+    finally:
+        conexion.close()
+
+def buscar_miembro_por_cedula(cedula):
+    """
+    Busca un miembro por su número de cédula.
+
+    Retorna:
+        tuple | None: (id_miembro, nombre, apellido, cedula, estado)
+                      o None si no existe.
+    """
+    conexion = conectar()
+
+    try:
+        cursor = conexion.cursor()
+
+        cursor.execute("""
+            SELECT id_miembro, nombre, apellido, cedula, estado
+            FROM miembros
+            WHERE cedula = ?
+        """, (cedula.strip(),))
+
+        return cursor.fetchone()
+
+    finally:
+        conexion.close()
+
+
+def obtener_tipos_membresia():
+    """
+    Obtiene los tipos de membresía activos.
+
+    Retorna:
+        list[tuple]: (id_tipo, nombre, duracion_cantidad, duracion_unidad, precio)
+    """
+    conexion = conectar()
+
+    try:
+        cursor = conexion.cursor()
+
+        cursor.execute("""
+            SELECT id_tipo, nombre, duracion_cantidad, duracion_unidad, precio
+            FROM tipos_membresia
+            WHERE estado = 'activo'
+            ORDER BY id_tipo
+        """)
+
+        return cursor.fetchall()
+
+    finally:
+        conexion.close()
+
+
+def calcular_fecha_vencimiento(fecha_inicio, cantidad, unidad):
+    """
+    Calcula la fecha de vencimiento de una membresía.
+
+    Los meses se suman por calendario: si el día no existe en el mes de
+    destino se usa el último día de ese mes (31/01 + 1 mes = 28/02).
+
+    Parámetros:
+        fecha_inicio (date): Fecha de inicio de la membresía.
+        cantidad (int): Duración de la membresía.
+        unidad (str): 'dias' o 'meses'.
+
+    Retorna:
+        date: Fecha de vencimiento.
+    """
+    if unidad == "dias":
+        return fecha_inicio + timedelta(days=cantidad)
+
+    if unidad == "meses":
+        total_meses = fecha_inicio.month - 1 + cantidad
+        anio = fecha_inicio.year + total_meses // 12
+        mes = total_meses % 12 + 1
+        dia = min(fecha_inicio.day, calendar.monthrange(anio, mes)[1])
+        return date(anio, mes, dia)
+
+    raise ValueError(f"Unidad de duración no válida: {unidad}")
+
+
+def registrar_pago(id_miembro, id_tipo, monto, fecha_inicio, estado_pago):
+    """
+    Registra un pago de cuota calculando su fecha de vencimiento según
+    el tipo de membresía.
+
+    Parámetros:
+        id_miembro (int): Miembro que realiza el pago.
+        id_tipo (int): Tipo de membresía elegido.
+        monto (int): Monto cobrado.
+        fecha_inicio (date): Fecha de inicio de la membresía.
+        estado_pago (str): 'pagado', 'pendiente' o 'vencido'.
+
+    Retorna:
+        tuple: True y mensaje si se registra correctamente.
+               False y mensaje si ocurre un error.
+    """
+    if estado_pago not in ESTADOS_PAGO:
+        return False, "El estado del pago no es válido."
+
+    if monto <= 0:
+        return False, "El monto debe ser mayor a cero."
+
+    conexion = conectar()
+
+    try:
+        cursor = conexion.cursor()
+
+        cursor.execute("""
+            SELECT nombre, duracion_cantidad, duracion_unidad
+            FROM tipos_membresia
+            WHERE id_tipo = ?
+        """, (id_tipo,))
+        tipo = cursor.fetchone()
+
+        if tipo is None:
+            return False, "El tipo de membresía no existe."
+
+        nombre_tipo, cantidad, unidad = tipo
+        fecha_vencimiento = calcular_fecha_vencimiento(fecha_inicio, cantidad, unidad)
+
+        cursor.execute("""
+            INSERT INTO pagos_cuotas (
+                id_miembro,
+                monto,
+                fecha_pago,
+                tipo_membresia,
+                fecha_inicio,
+                fecha_vencimiento,
+                estado_pago
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (
+            id_miembro,
+            monto,
+            date.today().isoformat(),
+            nombre_tipo,
+            fecha_inicio.isoformat(),
+            fecha_vencimiento.isoformat(),
+            estado_pago
+        ))
+
+        conexion.commit()
+
+        return True, "Pago registrado correctamente."
+
+    except sqlite3.IntegrityError:
+        return False, "El miembro seleccionado no existe."
+
+    except sqlite3.Error as error:
+        return False, f"Error al registrar el pago: {error}"
+
+    finally:
+        conexion.close()
+
+
+def actualizar_pagos_vencidos():
+    """
+    Marca como 'vencido' los pagos pendientes cuya fecha de vencimiento
+    ya pasó.
+
+    Retorna:
+        int: Cantidad de pagos actualizados.
+    """
+    conexion = conectar()
+
+    try:
+        cursor = conexion.cursor()
+
+        cursor.execute("""
+            UPDATE pagos_cuotas
+            SET estado_pago = 'vencido'
+            WHERE estado_pago = 'pendiente'
+            AND fecha_vencimiento < ?
+        """, (date.today().isoformat(),))
+
+        conexion.commit()
+
+        return cursor.rowcount
+
+    finally:
+        conexion.close()
+
+
+def listar_pagos(id_miembro=None, limite=100):
+    """
+    Lista los pagos registrados, del más reciente al más antiguo.
+
+    Parámetros:
+        id_miembro (int | None): Si se indica, solo lista los pagos de ese miembro.
+        limite (int): Cantidad máxima de pagos a retornar.
+
+    Retorna:
+        list[tuple]: (id_pago, miembro, cedula, tipo_membresia, monto,
+                      fecha_pago, fecha_inicio, fecha_vencimiento, estado_pago)
+    """
+    conexion = conectar()
+
+    try:
+        cursor = conexion.cursor()
+
+        consulta = """
+            SELECT
+                p.id_pago,
+                m.nombre || ' ' || m.apellido,
+                m.cedula,
+                p.tipo_membresia,
+                p.monto,
+                p.fecha_pago,
+                p.fecha_inicio,
+                p.fecha_vencimiento,
+                p.estado_pago
+            FROM pagos_cuotas p
+            JOIN miembros m ON m.id_miembro = p.id_miembro
+        """
+        parametros = []
+
+        if id_miembro is not None:
+            consulta += " WHERE p.id_miembro = ?"
+            parametros.append(id_miembro)
+
+        consulta += " ORDER BY p.fecha_inicio DESC, p.id_pago DESC LIMIT ?"
+        parametros.append(limite)
+
+        cursor.execute(consulta, parametros)
+
+        return cursor.fetchall()
 
     finally:
         conexion.close()

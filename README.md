@@ -10,7 +10,7 @@ El sistema busca centralizar la información de usuarios y miembros, facilitar e
 - Tkinter
 - SQLite3
 - datetime
-- tkcalendar (previsto para los módulos de Pagos y Asistencia)
+- tkcalendar
 - unittest
 - Git y GitHub
 - Visual Studio Code
@@ -40,11 +40,32 @@ Permite:
 - Establecer automáticamente la fecha de registro.
 - Definir el estado inicial del miembro como activo.
 
+### Módulo de Pagos y Cuotas
+
+Permite:
+
+- Buscar al miembro por su número de cédula (solo miembros activos).
+- Seleccionar el tipo de membresía; el monto se completa con el precio configurado y puede modificarse.
+- Elegir la fecha de inicio con un calendario (`tkcalendar`).
+- Calcular automáticamente la fecha de vencimiento según la duración del tipo de membresía.
+- Registrar el pago con estado `pagado` o `pendiente`.
+- Marcar automáticamente como `vencido` los pagos pendientes cuya fecha de vencimiento ya pasó.
+- Ver los últimos pagos registrados, o los del miembro seleccionado, con colores por estado.
+
+Los tipos de membresía se configuran en la tabla `tipos_membresia`:
+
+| Campo | Descripción |
+|---|---|
+| `nombre` | Nombre del tipo (Diaria, Mensual, etc.) |
+| `duracion_cantidad` | Cantidad de días o meses que dura |
+| `duracion_unidad` | `dias` o `meses` |
+| `precio` | Precio sugerido en guaraníes |
+| `estado` | `activo` o `inactivo` (los inactivos no se muestran) |
+
 ## Próximos módulos
 
 - Usuarios
-- Pagos y cuotas
-- Renovación y cálculo de vencimiento
+- Renovación de membresías
 - Asistencia
 
 ## Estructura del proyecto
@@ -56,21 +77,26 @@ gym-management/
 ├── login.py                # Pantalla de inicio de sesión
 ├── pantalla_principal.py   # Panel principal con acceso a los módulos
 ├── miembros.py             # Registro de miembros
+├── pagos.py                # Registro de pagos y cuotas
 ├── database.py             # Conexión y consultas a SQLite
 ├── estilos.py              # Colores y utilidades visuales compartidas
 ├── generar_docs.py         # Genera la documentación HTML con pydoc
-├── test_login.py           # Pruebas unitarias
+├── test_login.py           # Pruebas de login y miembros
+├── test_pagos.py           # Pruebas de pagos
+├── requirements.txt        # Dependencias externas
 ├── gym_management.db       # Base de datos SQLite
 ├── database.html           # Documentación generada
 ├── miembros.html           # Documentación generada
+├── pagos.html              # Documentación generada
 ├── estilos.html            # Documentación generada
 ├── README.md
 └── .gitignore
 ```
 
-## Ejecución
+## Instalación y ejecución
 
 ```bash
+pip install -r requirements.txt
 python main.py
 ```
 

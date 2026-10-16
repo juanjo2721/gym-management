@@ -2,14 +2,19 @@ import tkinter as tk
 from tkinter import messagebox
 
 from database import registrar_miembro
-
-
-COLOR_FONDO = "#f4f6f8"
-COLOR_PRINCIPAL = "#1f4e79"
-COLOR_TARJETA = "#ffffff"
-COLOR_TEXTO = "#222222"
-COLOR_SECUNDARIO = "#666666"
-COLOR_BOTON = "#1f4e79"
+from estilos import (
+    COLOR_BOTON,
+    COLOR_BOTON_CERRAR,
+    COLOR_BOTON_LIMPIAR,
+    COLOR_BOTON_TEXTO,
+    COLOR_FONDO,
+    COLOR_PRINCIPAL,
+    COLOR_SUBTITULO_ENCABEZADO,
+    COLOR_TARJETA,
+    COLOR_TEXTO,
+    COLOR_TEXTO_SUAVE,
+    COLOR_TITULO_ENCABEZADO,
+)
 
 
 def abrir_ventana_miembros(ventana_principal):
@@ -31,7 +36,7 @@ def abrir_ventana_miembros(ventana_principal):
         text="Agregar nuevo miembro",
         font=("Arial", 21, "bold"),
         bg=COLOR_PRINCIPAL,
-        fg="white"
+        fg=COLOR_TITULO_ENCABEZADO
     )
     titulo.pack(pady=(18, 4))
 
@@ -40,7 +45,7 @@ def abrir_ventana_miembros(ventana_principal):
         text="Complete los datos personales y de contacto",
         font=("Arial", 10),
         bg=COLOR_PRINCIPAL,
-        fg="#dbe8f3"
+        fg=COLOR_SUBTITULO_ENCABEZADO
     )
     subtitulo.pack()
 
@@ -153,7 +158,7 @@ def abrir_ventana_miembros(ventana_principal):
         text="Guardar miembro",
         font=("Arial", 11, "bold"),
         bg=COLOR_BOTON,
-        fg="white",
+        fg=COLOR_BOTON_TEXTO,
         width=18,
         height=2,
         borderwidth=0,
@@ -166,7 +171,7 @@ def abrir_ventana_miembros(ventana_principal):
         botones,
         text="Limpiar",
         font=("Arial", 11, "bold"),
-        bg="#dfe6ed",
+        bg=COLOR_BOTON_LIMPIAR,
         fg=COLOR_PRINCIPAL,
         width=14,
         height=2,
@@ -180,8 +185,8 @@ def abrir_ventana_miembros(ventana_principal):
         botones,
         text="Cerrar",
         font=("Arial", 11, "bold"),
-        bg="#eeeeee",
-        fg=COLOR_SECUNDARIO,
+        bg=COLOR_BOTON_CERRAR,
+        fg=COLOR_TEXTO_SUAVE,
         width=14,
         height=2,
         borderwidth=0,

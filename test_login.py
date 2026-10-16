@@ -1,8 +1,43 @@
+import os
+import sqlite3
+import tempfile
 import unittest
-from database import verificar_usuario
+
+import database
+from database import registrar_miembro, verificar_usuario
 
 
-class TestLogin(unittest.TestCase):
+class BaseDatosTemporal(unittest.TestCase):
+    """
+    Crea una base de datos temporal para cada prueba, de modo que los tests
+    no dependan ni modifiquen gym_management.db.
+    """
+
+    def setUp(self):
+        descriptor, self.ruta_db = tempfile.mkstemp(suffix=".db")
+        os.close(descriptor)
+
+        self.db_original = database.DB_NAME
+        database.DB_NAME = self.ruta_db
+        database.crear_tablas()
+
+        conexion = sqlite3.connect(self.ruta_db)
+        conexion.executemany("""
+            INSERT INTO usuarios (nombre, usuario, contrasena, rol, estado)
+            VALUES (?, ?, ?, ?, ?)
+        """, [
+            ("Administrador", "admin", "admin123", "administrador", "activo"),
+            ("Ex empleado", "inactivo", "clave123", "recepcionista", "inactivo"),
+        ])
+        conexion.commit()
+        conexion.close()
+
+    def tearDown(self):
+        database.DB_NAME = self.db_original
+        os.remove(self.ruta_db)
+
+
+class TestLogin(BaseDatosTemporal):
 
     def test_login_correcto(self):
         resultado = verificar_usuario("admin", "admin123")
@@ -19,6 +54,26 @@ class TestLogin(unittest.TestCase):
     def test_campos_vacios(self):
         resultado = verificar_usuario("", "")
         self.assertIsNone(resultado)
+
+    def test_login_usuario_inactivo(self):
+        resultado = verificar_usuario("inactivo", "clave123")
+        self.assertIsNone(resultado)
+
+
+class TestMiembros(BaseDatosTemporal):
+
+    def test_registrar_miembro_correcto(self):
+        registrado, _ = registrar_miembro(
+            "Ana", "Gomez", "1111111", "0981000000", "ana@email.com"
+        )
+        self.assertTrue(registrado)
+
+    def test_registrar_miembro_cedula_duplicada(self):
+        registrar_miembro("Ana", "Gomez", "1111111", "", "")
+        registrado, mensaje = registrar_miembro("Otra", "Persona", "1111111", "", "")
+
+        self.assertFalse(registrado)
+        self.assertIn("cédula", mensaje)
 
 
 if __name__ == "__main__":

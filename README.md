@@ -10,7 +10,7 @@ El sistema busca centralizar la información de usuarios y miembros, facilitar e
 - Tkinter
 - SQLite3
 - datetime
-- tkcalendar
+- tkcalendar (previsto para los módulos de Pagos y Asistencia)
 - unittest
 - Git y GitHub
 - Visual Studio Code
@@ -26,6 +26,7 @@ Permite:
 - Permitir el acceso únicamente a usuarios activos.
 - Mostrar la pantalla principal luego de iniciar sesión.
 - Informar cuando las credenciales son incorrectas.
+- Cerrar sesión y volver a la pantalla de login.
 
 ### Módulo de Miembros
 
@@ -51,13 +52,42 @@ Permite:
 ```text
 gym-management/
 │
-├── database.py
-├── database.html
-├── gym_management.db
-├── login.py
-├── main.py
-├── miembros.py
-├── pantalla_principal.py
-├── test_login.py
+├── main.py                 # Punto de entrada: crea la ventana y muestra el login
+├── login.py                # Pantalla de inicio de sesión
+├── pantalla_principal.py   # Panel principal con acceso a los módulos
+├── miembros.py             # Registro de miembros
+├── database.py             # Conexión y consultas a SQLite
+├── estilos.py              # Colores y utilidades visuales compartidas
+├── generar_docs.py         # Genera la documentación HTML con pydoc
+├── test_login.py           # Pruebas unitarias
+├── gym_management.db       # Base de datos SQLite
+├── database.html           # Documentación generada
+├── miembros.html           # Documentación generada
+├── estilos.html            # Documentación generada
 ├── README.md
 └── .gitignore
+```
+
+## Ejecución
+
+```bash
+python main.py
+```
+
+Usuario de prueba: `admin` / `admin123`.
+
+## Pruebas
+
+```bash
+python -m unittest -v
+```
+
+Las pruebas crean una base de datos temporal en cada ejecución, por lo que no modifican `gym_management.db`.
+
+## Documentación
+
+```bash
+python generar_docs.py
+```
+
+Genera los archivos `.html` con pydoc usando rutas relativas.

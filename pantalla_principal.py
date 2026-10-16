@@ -1,16 +1,20 @@
 import tkinter as tk
 from tkinter import messagebox
 
+from estilos import (
+    COLOR_BOTON,
+    COLOR_BOTON_TEXTO,
+    COLOR_FONDO,
+    COLOR_PRINCIPAL,
+    COLOR_SECUNDARIO,
+    COLOR_SUBTITULO_ENCABEZADO,
+    COLOR_TARJETA,
+    COLOR_TEXTO,
+    COLOR_TEXTO_SUAVE,
+    COLOR_TITULO_ENCABEZADO,
+    limpiar_ventana,
+)
 from miembros import abrir_ventana_miembros
-
-
-COLOR_FONDO = "#f4f6f8"
-COLOR_PRINCIPAL = "#1f4e79"
-COLOR_SECUNDARIO = "#eef3f8"
-COLOR_TARJETA = "#ffffff"
-COLOR_TEXTO = "#222222"
-COLOR_TEXTO_SUAVE = "#666666"
-COLOR_BOTON = "#1f4e79"
 
 
 def mostrar_modulo(nombre_modulo):
@@ -23,12 +27,18 @@ def mostrar_modulo(nombre_modulo):
     )
 
 
-def abrir_pantalla_principal(usuario):
+def mostrar_pantalla_principal(ventana_principal, usuario, al_cerrar_sesion):
     """
-    Abre la pantalla principal del sistema después de iniciar sesión.
-    """
+    Muestra la pantalla principal del sistema después de iniciar sesión.
 
-    ventana_principal = tk.Tk()
+    Parámetros:
+        ventana_principal (tk.Tk): Ventana raíz de la aplicación.
+        usuario (str): Nombre del usuario que inició sesión.
+        al_cerrar_sesion (callable): Función que se ejecuta al cerrar sesión
+            (normalmente vuelve a mostrar el login).
+    """
+    limpiar_ventana(ventana_principal)
+
     ventana_principal.title("Sistema de Gestión para Gimnasio")
     ventana_principal.geometry("850x520")
     ventana_principal.resizable(False, False)
@@ -46,7 +56,7 @@ def abrir_pantalla_principal(usuario):
         text="Sistema de Gestión para Gimnasio",
         font=("Arial", 22, "bold"),
         bg=COLOR_PRINCIPAL,
-        fg="white"
+        fg=COLOR_TITULO_ENCABEZADO
     )
     titulo.pack(pady=(18, 0))
 
@@ -55,7 +65,7 @@ def abrir_pantalla_principal(usuario):
         text="Panel principal del sistema",
         font=("Arial", 11),
         bg=COLOR_PRINCIPAL,
-        fg="#dbe8f3"
+        fg=COLOR_SUBTITULO_ENCABEZADO
     )
     subtitulo.pack(pady=(4, 0))
 
@@ -167,14 +177,14 @@ def abrir_pantalla_principal(usuario):
         )
 
         if respuesta:
-            ventana_principal.destroy()
+            al_cerrar_sesion()
 
     boton_cerrar = tk.Button(
         contenido,
         text="Cerrar sesión",
         font=("Arial", 11, "bold"),
         bg=COLOR_BOTON,
-        fg="white",
+        fg=COLOR_BOTON_TEXTO,
         width=18,
         height=2,
         borderwidth=0,
@@ -182,5 +192,3 @@ def abrir_pantalla_principal(usuario):
         command=cerrar_sesion
     )
     boton_cerrar.pack(anchor="e", pady=(25, 0))
-
-    ventana_principal.mainloop()

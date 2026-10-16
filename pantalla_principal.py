@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
 
+from miembros import abrir_ventana_miembros
+
 
 COLOR_FONDO = "#f4f6f8"
 COLOR_PRINCIPAL = "#1f4e79"
@@ -9,28 +11,25 @@ COLOR_TARJETA = "#ffffff"
 COLOR_TEXTO = "#222222"
 COLOR_TEXTO_SUAVE = "#666666"
 COLOR_BOTON = "#1f4e79"
-COLOR_BOTON_HOVER = "#163b5c"
 
 
 def mostrar_modulo(nombre_modulo):
     """
-    Muestra un mensaje informativo para los modulos que aun estan en desarrollo.
+    Muestra un mensaje informativo para los módulos que aún están en desarrollo.
     """
     messagebox.showinfo(
-        "Modulo en desarrollo",
-        f"El modulo {nombre_modulo} sera desarrollado en los siguientes sprints."
+        "Módulo en desarrollo",
+        f"El módulo {nombre_modulo} será desarrollado en los siguientes sprints."
     )
 
 
 def abrir_pantalla_principal(usuario):
     """
-    Abre la pantalla principal del sistema luego de un inicio de sesion correcto.
-
-    Parametros:
-        usuario (str): Nombre del usuario que inicio sesion.
+    Abre la pantalla principal del sistema después de iniciar sesión.
     """
+
     ventana_principal = tk.Tk()
-    ventana_principal.title("Sistema de Gestion para Gimnasio")
+    ventana_principal.title("Sistema de Gestión para Gimnasio")
     ventana_principal.geometry("850x520")
     ventana_principal.resizable(False, False)
     ventana_principal.configure(bg=COLOR_FONDO)
@@ -44,7 +43,7 @@ def abrir_pantalla_principal(usuario):
 
     titulo = tk.Label(
         encabezado,
-        text="Sistema de Gestion para Gimnasio",
+        text="Sistema de Gestión para Gimnasio",
         font=("Arial", 22, "bold"),
         bg=COLOR_PRINCIPAL,
         fg="white"
@@ -64,7 +63,12 @@ def abrir_pantalla_principal(usuario):
         ventana_principal,
         bg=COLOR_FONDO
     )
-    contenido.pack(fill="both", expand=True, padx=35, pady=25)
+    contenido.pack(
+        fill="both",
+        expand=True,
+        padx=35,
+        pady=25
+    )
 
     bienvenida = tk.Label(
         contenido,
@@ -77,7 +81,7 @@ def abrir_pantalla_principal(usuario):
 
     descripcion = tk.Label(
         contenido,
-        text="Seleccione una opcion para acceder a los modulos del sistema.",
+        text="Seleccione una opción para acceder a los módulos del sistema.",
         font=("Arial", 10),
         bg=COLOR_FONDO,
         fg=COLOR_TEXTO_SUAVE
@@ -98,7 +102,7 @@ def abrir_pantalla_principal(usuario):
     )
     panel_botones.pack(anchor="center")
 
-    def crear_boton_modulo(texto, fila, columna):
+    def crear_boton_modulo(texto, fila, columna, comando=None):
         boton = tk.Button(
             panel_botones,
             text=texto,
@@ -109,19 +113,35 @@ def abrir_pantalla_principal(usuario):
             height=3,
             borderwidth=0,
             cursor="hand2",
-            command=lambda: mostrar_modulo(texto)
+            command=comando or (
+                lambda: mostrar_modulo(texto)
+            )
         )
-        boton.grid(row=fila, column=columna, padx=15, pady=15)
+
+        boton.grid(
+            row=fila,
+            column=columna,
+            padx=15,
+            pady=15
+        )
+
         return boton
 
     crear_boton_modulo("Usuarios", 0, 0)
-    crear_boton_modulo("Socios", 0, 1)
+
+    crear_boton_modulo(
+        "Miembros",
+        0,
+        1,
+        lambda: abrir_ventana_miembros(ventana_principal)
+    )
+
     crear_boton_modulo("Pagos y Cuotas", 1, 0)
     crear_boton_modulo("Asistencia", 1, 1)
 
     estado = tk.Label(
         contenido,
-        text="Sprint actual: Modulo Login finalizado",
+        text="Sprint actual: Módulo Miembros en desarrollo",
         font=("Arial", 10, "bold"),
         bg=COLOR_FONDO,
         fg=COLOR_PRINCIPAL
@@ -130,7 +150,10 @@ def abrir_pantalla_principal(usuario):
 
     detalle = tk.Label(
         contenido,
-        text="El sistema valida credenciales desde SQLite y permite el acceso a la pantalla principal.",
+        text=(
+            "El sistema valida credenciales desde SQLite "
+            "y permite gestionar los miembros del gimnasio."
+        ),
         font=("Arial", 10),
         bg=COLOR_FONDO,
         fg=COLOR_TEXTO_SUAVE
@@ -138,13 +161,17 @@ def abrir_pantalla_principal(usuario):
     detalle.pack(anchor="w")
 
     def cerrar_sesion():
-        respuesta = messagebox.askyesno("Cerrar sesion", "Desea cerrar la sesion actual?")
+        respuesta = messagebox.askyesno(
+            "Cerrar sesión",
+            "¿Desea cerrar la sesión actual?"
+        )
+
         if respuesta:
             ventana_principal.destroy()
 
     boton_cerrar = tk.Button(
         contenido,
-        text="Cerrar sesion",
+        text="Cerrar sesión",
         font=("Arial", 11, "bold"),
         bg=COLOR_BOTON,
         fg="white",

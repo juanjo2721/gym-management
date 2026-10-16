@@ -13,6 +13,7 @@ from estilos import (
     limpiar_ventana,
 )
 from miembros import abrir_ventana_miembros
+from pagos import abrir_ventana_pagos
 
 
 def mostrar_modulo(nombre_modulo):
@@ -28,12 +29,6 @@ def mostrar_modulo(nombre_modulo):
 def mostrar_pantalla_principal(ventana_principal, usuario, al_cerrar_sesion):
     """
     Muestra la pantalla principal del sistema después de iniciar sesión.
-
-    Parámetros:
-        ventana_principal (tk.Tk): Ventana raíz de la aplicación.
-        usuario (str): Nombre del usuario que inició sesión.
-        al_cerrar_sesion (callable): Función que se ejecuta al cerrar sesión
-            (normalmente vuelve a mostrar el login).
     """
     limpiar_ventana(ventana_principal)
 
@@ -58,8 +53,6 @@ def mostrar_pantalla_principal(ventana_principal, usuario, al_cerrar_sesion):
         if respuesta:
             al_cerrar_sesion()
 
-    # Se ubica en el encabezado para que siempre quede visible,
-    # sin depender del alto del contenido.
     boton_cerrar = tk.Button(
         encabezado,
         text="Cerrar sesión",
@@ -168,12 +161,18 @@ def mostrar_pantalla_principal(ventana_principal, usuario, al_cerrar_sesion):
         lambda: abrir_ventana_miembros(ventana_principal)
     )
 
-    crear_boton_modulo("Pagos y Cuotas", 1, 0)
+    crear_boton_modulo(
+        "Pagos y Cuotas",
+        1,
+        0,
+        lambda: abrir_ventana_pagos(ventana_principal)
+    )
+
     crear_boton_modulo("Asistencia", 1, 1)
 
     estado = tk.Label(
         contenido,
-        text="Sprint actual: Módulo Miembros en desarrollo",
+        text="Sprint actual: Módulo Pagos y Cuotas en desarrollo",
         font=("Arial", 10, "bold"),
         bg=COLOR_FONDO,
         fg=COLOR_PRINCIPAL
@@ -184,7 +183,7 @@ def mostrar_pantalla_principal(ventana_principal, usuario, al_cerrar_sesion):
         contenido,
         text=(
             "El sistema valida credenciales desde SQLite "
-            "y permite gestionar los miembros del gimnasio."
+            "y permite gestionar los miembros y sus pagos."
         ),
         font=("Arial", 10),
         bg=COLOR_FONDO,

@@ -14,7 +14,7 @@ import pydoc
 import re
 
 
-MODULOS = ["database", "miembros", "estilos"]
+MODULOS = ["database", "miembros", "pagos", "estilos"]
 
 
 def generar_documentacion():
